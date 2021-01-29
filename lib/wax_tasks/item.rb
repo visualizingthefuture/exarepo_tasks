@@ -25,9 +25,16 @@ module WaxTasks
 
     #
     #
+    def accepted_data_formats
+      %w[.csv]
+    end
+
+    #
+    #
     def type
       Dir.exist?(@path) ? 'dir' : File.extname(@path).downcase
     end
+
 
     #
     #
@@ -35,6 +42,11 @@ module WaxTasks
       accepted_image_formats.include? @type or @type == 'dir'
     end
 
+    #
+    #
+    def file_valid?
+      accepted_data_formats.include? @type or @type == 'dir'
+    end
     #
     #
     def record?
@@ -45,6 +57,8 @@ module WaxTasks
     #
     def assets
       if accepted_image_formats.include? @type
+        [Asset.new(@path, @pid, @variants)]
+      elsif  accepted_data_formats.include? @type
         [Asset.new(@path, @pid, @variants)]
       elsif @type == 'dir'
         paths = Dir.glob("#{@path}/*{#{accepted_image_formats.join(',')}}").sort
@@ -58,6 +72,12 @@ module WaxTasks
     #
     def simple_derivatives
       @assets.map(&:simple_derivatives).flatten
+    end
+
+    #
+    #
+    def simple_file_derivatives
+      @assets.map(&:simple_file_derivatives).flatten
     end
 
     #

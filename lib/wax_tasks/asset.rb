@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
+require 'csv'
+
 #
 module WaxTasks
   Derivative = Struct.new(:path, :label, :img)
-
+  FileDerivative = Struct.new(:path, :label, :csv_preview)
   #
   class Asset
     attr_reader :id, :path
@@ -36,6 +38,23 @@ module WaxTasks
 
         img.format 'jpg'
         Derivative.new("#{@id}/#{label}.jpg", label, img)
+      end
+    end
+
+    def simple_file_derivatives
+      @variants.map do |label, nrow|
+        # get total rows
+        csv_file = File.open(@path,"r")
+        #total_rows = csv_file.readlines.size
+        total_rows = `wc -l < #{@path}`.to_i
+        if nrow > total_rows
+          warn Rainbow("Tried to create derivative #{nrow} rows long, but asset #{@id} for item #{@pid} only has #{total_rows} rows.").yellow
+          csv_preview = csv_file
+        else
+          csv_preview = CSV.foreach(@path, headers: true).take(nrow)
+        end
+
+        FileDerivative.new("#{@id}/#{label}.csv", label, csv_preview)
       end
     end
 
