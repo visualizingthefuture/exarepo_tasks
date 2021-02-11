@@ -3,7 +3,7 @@
 #require 'mini_magick'
 require 'progress_bar'
 #require 'wax_iiif'
-
+require 'csv'
 #
 module WaxTasks
   #
@@ -56,7 +56,15 @@ module WaxTasks
             FileUtils.mkdir_p File.dirname(path)
             next if File.exist? path
 
-            d.csv_preview.write path
+            puts path
+            # TODO: fix missing header, string quotations, extra line in csv fileout
+            CSV.open(path, "w") do |csv|
+              csv << d.csv_preview
+            end
+
+            # d.csv_preview.write path
+            # expected behavior: write a truncated dataset to a new directory called files derivatives
+
             item.record.set d.label, path if item.record? # take name of variant and write asset path to record metadata
           end
           bar.increment!
