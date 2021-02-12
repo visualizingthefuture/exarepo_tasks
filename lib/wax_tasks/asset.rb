@@ -5,7 +5,7 @@ require 'csv'
 #
 module WaxTasks
   Derivative = Struct.new(:path, :label, :img)
-  FileDerivative = Struct.new(:path, :label, :csv_preview)
+  FileDerivative = Struct.new(:path, :label, :csv_preview, :size)
   #
   class Asset
     attr_reader :id, :path
@@ -47,10 +47,8 @@ module WaxTasks
         csv_file = File.open(@path,"rb")
         #total_rows = csv_file.readlines.size
         total_rows = `wc -l < #{@path}`.to_i
-        puts nrow
-        puts total_rows
         my_output = Array.new
-        my_output << CSV.open(@path, 'r') { |csv| csv.first }
+        my_output << CSV.open(@path, &:readline)
         CSV.foreach(@path, headers: true) do |row|
           my_output << row
         end
@@ -62,7 +60,10 @@ module WaxTasks
         
         csv_preview = my_output
 
-        FileDerivative.new("#{@id}/#{label}.csv", label, csv_preview)
+        size = (File.size(@path).to_f / 2**20).round(5)
+        puts "Successfully generated preview for csv file: #{size} MB, #{total_rows} rows (#{nrow} used)"
+
+        FileDerivative.new("#{@id}/#{label}.csv", label, csv_preview, size)
       end
     end
 
