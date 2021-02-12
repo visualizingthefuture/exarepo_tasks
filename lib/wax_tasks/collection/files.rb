@@ -56,10 +56,11 @@ module WaxTasks
             FileUtils.mkdir_p File.dirname(path)
             next if File.exist? path
 
-            puts path
             # TODO: fix missing header, string quotations, extra line in csv fileout
-            CSV.open(path, "w") do |csv|
-              csv << d.csv_preview
+            CSV.open(path, "wb") do |csv|
+              d.csv_preview.each do |row|
+                csv << row
+              end
             end
 
             # d.csv_preview.write path

@@ -44,15 +44,23 @@ module WaxTasks
     def simple_file_derivatives
       @variants.map do |label, nrow|
         # get total rows
-        csv_file = File.open(@path,"r")
+        csv_file = File.open(@path,"rb")
         #total_rows = csv_file.readlines.size
         total_rows = `wc -l < #{@path}`.to_i
+        puts nrow
+        puts total_rows
+        my_output = Array.new
+        my_output << CSV.open(@path, 'r') { |csv| csv.first }
+        CSV.foreach(@path, headers: true) do |row|
+          my_output << row
+        end
         if nrow > total_rows
           warn Rainbow("Tried to create derivative #{nrow} rows long, but asset #{@id} for item #{@pid} only has #{total_rows} rows.").yellow
-          csv_preview = csv_file
         else
-          csv_preview = CSV.foreach(@path, headers: true).take(nrow)
-        end
+          my_output = my_output[0, nrow + 1]
+         end
+        
+        csv_preview = my_output
 
         FileDerivative.new("#{@id}/#{label}.csv", label, csv_preview)
       end
