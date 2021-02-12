@@ -46,10 +46,11 @@ module WaxTasks
         # get total rows
         csv_file = File.open(@path,"rb")
         #total_rows = csv_file.readlines.size
-        total_rows = `wc -l < #{@path}`.to_i
         data = CSV.read(@path, { encoding: "r:bom|utf-8", headers: true, converters: :all})
         hashed_data = data.map { |d| d.to_hash }
         my_output = hashed_data
+
+        total_rows = my_output.length
 
         if nrow > total_rows
           warn Rainbow("Tried to create derivative #{nrow} rows long, but asset #{@id} for item #{@pid} only has #{total_rows} rows.").yellow
