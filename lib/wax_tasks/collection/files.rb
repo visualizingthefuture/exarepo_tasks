@@ -57,10 +57,14 @@ module WaxTasks
             next if File.exist? path
 
             # TODO: fix missing header, string quotations, extra line in csv fileout
-            CSV.open(path, "wb") do |csv|
-              d.csv_preview.each do |row|
-                csv << row
-              end
+            File.open(path, "wb") do |f|
+              f.write(d.csv_preview.to_json)
+              
+              #d.csv_preview.each do |row|
+               # puts "running? running?"
+                # puts row.to_json
+                # csv << row
+              # end
             end
 
             # d.csv_preview.write path
