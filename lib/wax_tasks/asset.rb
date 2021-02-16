@@ -43,10 +43,11 @@ module WaxTasks
 
     def simple_file_derivatives
       @variants.map do |label, nrow|
-        # get total rows
-        csv_file = File.open(@path,"rb")
-        #total_rows = csv_file.readlines.size
-        data = CSV.read(@path, { encoding: "r:bom|utf-8", headers: true, converters: :all})
+
+        # TODO: isolate file parsing in function
+        # (to handle at least CSV and JSON, handle parsing errors)
+        
+        data = CSV.read(@path, { encoding: "bom|utf-8", headers: true, converters: :all})
         hashed_data = data.map { |d| d.to_hash }
         my_output = hashed_data
 
@@ -59,12 +60,12 @@ module WaxTasks
          end
         
         puts my_output
-        csv_preview = my_output
+        preview_data = my_output
 
         size = (File.size(@path).to_f / 2**20).round(5)
         puts "Successfully generated preview for csv file: #{size} MB, #{total_rows} rows (#{nrow} used)"
 
-        FileDerivative.new("#{@id}/#{label}.csv", label, csv_preview, size)
+        FileDerivative.new("#{@id}/#{label}.json", label, preview_data, size)
       end
     end
 

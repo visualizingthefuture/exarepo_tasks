@@ -58,7 +58,7 @@ module WaxTasks
 
             # TODO: fix missing header, string quotations, extra line in csv fileout
             File.open(path, "wb") do |f|
-              f.write(d.csv_preview.to_json)
+              f.write(d.preview_data.to_json)
               
               #d.csv_preview.each do |row|
                # puts "running? running?"
