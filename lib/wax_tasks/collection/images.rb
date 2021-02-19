@@ -20,7 +20,7 @@ module WaxTasks
         Dir.glob(Utils.safe_join(@imagedata_source, '*')).map do |path|
           item = WaxTasks::Item.new(path, @image_variants)
           next if item.type == '.pdf'
-          next puts Rainbow("Skipping #{path} because type #{item.type} is not an accepted format").yellow unless item.valid?
+          next puts Rainbow("Skipping #{path} because type #{item.type} is not an accepted format").yellow unless item.valid?("image")
 
           item.record      = records.find { |r| r.pid == item.pid }
           item.iiif_config = @config.dig 'images', 'iiif'

@@ -56,7 +56,7 @@ module WaxTasks
         if nrow > total_rows
           warn Rainbow("Tried to create derivative #{nrow} rows long, but asset #{@id} for item #{@pid} only has #{total_rows} rows.").yellow
         else
-          my_output = my_output[0, nrow + 1]
+          my_output = my_output[0, nrow]
          end
 
         preview_data = my_output

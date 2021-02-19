@@ -19,15 +19,11 @@ module WaxTasks
 
     #
     #
-    def accepted_image_formats
-      %w[.png .jpg .jpeg .tiff .tif]
+    def accepted_formats
+      { "image" => %w[.png .jpg .jpeg .tiff .tif],
+      "data" => %w[.csv .json] }
     end
 
-    #
-    #
-    def accepted_data_formats
-      %w[.csv]
-    end
 
     #
     #
@@ -38,15 +34,11 @@ module WaxTasks
 
     #
     #
-    def valid?
-      accepted_image_formats.include? @type or @type == 'dir'
+    def valid?(asset_type)
+      accepted_formats[asset_type].include? @type or @type == 'dir'
     end
 
-    #
-    #
-    def file_valid?
-      accepted_data_formats.include? @type or @type == 'dir'
-    end
+
     #
     #
     def record?
@@ -56,12 +48,12 @@ module WaxTasks
     #
     #
     def assets
-      if accepted_image_formats.include? @type
+      if accepted_formats["image"].include? @type
         [Asset.new(@path, @pid, @variants)]
-      elsif  accepted_data_formats.include? @type
+      elsif  accepted_formats["data"].include? @type
         [Asset.new(@path, @pid, @variants)]
       elsif @type == 'dir'
-        paths = Dir.glob("#{@path}/*{#{accepted_image_formats.join(',')}}").sort
+        paths = Dir.glob("#{@path}/*{#{(accepted_formats["image"] + accepted_formats["data"]).join(',')}}").sort
         paths.map { |p| Asset.new(p, @pid, @variants) }
       else
         []
