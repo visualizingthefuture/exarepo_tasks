@@ -5,7 +5,7 @@ require 'csv'
 #
 module WaxTasks
   Derivative = Struct.new(:path, :label, :img)
-  FileDerivative = Struct.new(:path, :label, :csv_preview, :size)
+  FileDerivative = Struct.new(:path, :label, :preview_data, :size)
   #
   class Asset
     attr_reader :id, :path
@@ -58,8 +58,7 @@ module WaxTasks
         else
           my_output = my_output[0, nrow + 1]
          end
-        
-        puts my_output
+
         preview_data = my_output
 
         size = (File.size(@path).to_f / 2**20).round(5)
