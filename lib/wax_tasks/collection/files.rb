@@ -52,6 +52,9 @@ module WaxTasks
         bar.write
         items_from_filedata.map do |item|
           item.simple_file_derivatives.each do |d| # these are valid assets
+            # skip if empty preview
+            next if d.preview_data == []
+            
             path = "#{@simple_file_derivative_source}/#{d.path}"
             FileUtils.mkdir_p File.dirname(path)
             next if File.exist? path
