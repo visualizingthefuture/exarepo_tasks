@@ -1,20 +1,22 @@
 # frozen_string_literal: true
 
 require 'csv'
+require 'json'
 
 #
 module WaxTasks
   Derivative = Struct.new(:path, :label, :img)
-  FileDerivative = Struct.new(:path, :label, :csv_preview)
+  FileDerivative = Struct.new(:path, :label, :preview_data, :size)
   #
   class Asset
     attr_reader :id, :path
 
-    def initialize(path, pid, variants)
+    def initialize(path, pid, variants, type)
       @path     = path
       @pid      = pid
       @id       = asset_id
       @variants = variants
+      @type     = type
     end
 
     #
@@ -41,20 +43,50 @@ module WaxTasks
       end
     end
 
+    def parse_csv
+      data = CSV.read(@path, { encoding: "bom|utf-8", headers: true, converters: :all})
+      data.map { |d| d.to_hash }
+    end
+
+    def parse_json
+      data = File.read(@path, { encoding: "bom|utf-8"})
+      parsed_data = JSON.parse(data)
+    end
+
+
     def simple_file_derivatives
       @variants.map do |label, nrow|
-        # get total rows
-        csv_file = File.open(@path,"r")
-        #total_rows = csv_file.readlines.size
-        total_rows = `wc -l < #{@path}`.to_i
-        if nrow > total_rows
-          warn Rainbow("Tried to create derivative #{nrow} rows long, but asset #{@id} for item #{@pid} only has #{total_rows} rows.").yellow
-          csv_preview = csv_file
-        else
-          csv_preview = CSV.foreach(@path, headers: true).take(nrow)
+
+        puts "type: "
+        puts @type
+
+        parsed_data = []
+        
+        # read data based on type and store in parsed_data
+
+        case @type
+        when ".csv"
+          parsed_data = parse_csv()
+        when ".json"
+          parsed_data = parse_json()
+        when ".xls" || ".xlsx"
+          warn Rainbow(".xls/.xlsx support not currently implemented, skipping for now").yellow
         end
 
-        FileDerivative.new("#{@id}/#{label}.csv", label, csv_preview)
+        total_rows = parsed_data.length
+
+        if nrow > total_rows
+          warn Rainbow("Tried to create derivative #{nrow} rows long, but asset #{@id} for item #{@pid} only has #{total_rows} rows.").yellow
+          preview_data = parsed_data
+        else
+          preview_data = parsed_data[0, nrow]
+         end
+
+        size = (File.size(@path).to_f / 2**20).round(5)
+        puts "Successfully generated preview for #{@type} file: #{size} MB, #{total_rows} rows (#{nrow} used)"
+        puts preview_data[0]
+        return [] if preview_data == []
+        FileDerivative.new("#{@id}/#{label}.json", label, preview_data, size)
       end
     end
 

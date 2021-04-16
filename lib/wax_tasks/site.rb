@@ -96,8 +96,10 @@ module WaxTasks
                   collection.write_simple_file_derivatives
                 end
 
-      collection.update_metadata records
-      puts Rainbow("\nDone ✔").green
+      if records != []
+        collection.update_metadata records
+        puts Rainbow("\nDone ✔").green
+      end
     end
   end
 end
