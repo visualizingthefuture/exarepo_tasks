@@ -19,7 +19,7 @@ module WaxTasks
     IMAGE_DERIVATIVE_DIRECTORY = 'img/derivatives'
     FILE_DERIVATIVE_DIRECTORY = 'files/derivatives'
     DEFAULT_VARIANTS = { 'thumbnail' => 250, 'fullwidth' => 1140 }.freeze
-    DEFAULT_FILE_VARIANTS = { 'preview' => 10 }.freeze
+    DEFAULT_FILE_VARIANTS = { 'data_preview' => 10 }.freeze
     # specifies number of rows in preview dataset
 
     #
