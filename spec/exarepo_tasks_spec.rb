@@ -7,14 +7,6 @@ RSpec.describe ExarepoTasks do
     expect(ExarepoTasks::VERSION).not_to be nil
   end
 
-  it "broccoli is gross" do
-    expect(Foodie::Food.portray("Broccoli")).to eql("Gross!")
-  end
-
-  it "anything else is delicious" do
-    expect(Foodie::Food.portray("Not Broccoli")).to eql("Delicious!")
-  end
-
   it "can create site" do
     expect(ExarepoTasks::Site.return_something).to eql("something")
   end

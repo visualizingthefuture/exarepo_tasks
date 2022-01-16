@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    exarepo_tasks (0.1.0)
+    exarepo_tasks (0.1.3)
       rake (~> 13.0)
       wax_tasks
 
