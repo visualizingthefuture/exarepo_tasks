@@ -1,28 +1,15 @@
-# run $ DEBUG=true bundle exec rspec for verbose output
-# run $ bundle exec rspec for sparse output
-QUIET = !ENV['DEBUG']
+# frozen_string_literal: true
 
-# use codecov + add requirements
-require 'setup'
-require 'simplecov'
-SimpleCov.start do
-  add_filter 'spec'
-end
-require 'wax_tasks'
+require "exarepo_tasks"
 
-# provide shared context for tests
-shared_context 'shared', :shared_context => :metadata do
-   let(:config_from_file)         { WaxTasks.config_from_file }
-   let(:invalid_content_config)   { WaxTasks.config_from_file("#{BUILD}/_invalid_content_config.yml") }
-   let(:invalid_format_config)    { WaxTasks.config_from_file("#{BUILD}/_invalid_format_config.yml") }
-   let(:empty_config)             { Hash.new }
+RSpec.configure do |config|
+  # Enable flags like --only-failures and --next-failure
+  config.example_status_persistence_file_path = ".rspec_status"
 
-   let(:site_from_config_file)    { WaxTasks::Site.new(config_from_file) }
-   let(:site_from_empty_config)   { WaxTasks::Site.new(empty_config) }
-   let(:site_from_invalid_config) { WaxTasks::Site.new(invalid_content_config) }
+  # Disable RSpec exposing methods globally on `Module` and `main`
+  config.disable_monkey_patching!
 
-   let(:args_from_file)           { %w[csv_collection json_collection yaml_collection] }
-   let(:csv)                      { args_from_file.first }
-   let(:json)                     { args_from_file[1] }
-   let(:yaml)                     { args_from_file[2] }
+  config.expect_with :rspec do |c|
+    c.syntax = :expect
+  end
 end

@@ -1,11 +1,12 @@
 # frozen_string_literal: true
 
-source 'https://rubygems.org'
+source "https://rubygems.org"
+
+# Specify your gem's dependencies in exarepo_tasks.gemspec
 gemspec
 
-# dev/test utilities
-gem 'bundle-audit', require: false
-gem 'diane', require: false
-gem 'rubocop', require: false
-gem 'simplecov', '0.17.1', require: false
-gem 'yard', require: false
+#gem "rake", "~> 13.0"
+
+#gem "rspec", "~> 3.0"
+
+#gem 'wax_tasks'
