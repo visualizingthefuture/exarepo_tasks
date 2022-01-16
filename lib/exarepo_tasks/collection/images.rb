@@ -1,15 +1,17 @@
 # frozen_string_literal: true
 
+require 'wax_tasks'
 require 'mini_magick'
 require 'progress_bar'
 require 'wax_iiif'
 
 #
-module WaxTasks
+module ExarepoTasks
   #
-  class Collection
+  class Collection < WaxTasks::Collection
     #
     module Images
+      extend WaxTasks::Collection::Images
       #
       #
       def items_from_imagedata
@@ -18,7 +20,7 @@ module WaxTasks
         pre_process_pdfs
         records = records_from_metadata
         Dir.glob(Utils.safe_join(@imagedata_source, '*')).map do |path|
-          item = WaxTasks::Item.new(path, @image_variants)
+          item = ExarepoTasks::Item.new(path, @image_variants)
           next if item.type == '.pdf'
           next puts Rainbow("Skipping #{path} because type #{item.type} is not an accepted format").yellow unless item.valid?("image")
 
@@ -27,7 +29,7 @@ module WaxTasks
           warn Rainbow("\nCould not find record in #{@metadata_source} for image item #{path}.\n").orange if item.record.nil?
           item
         end.compact
-      end      
+      end
 
     end
   end

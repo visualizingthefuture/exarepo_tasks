@@ -1,14 +1,16 @@
 # frozen_string_literal: true
 
+require 'wax_tasks'
 require 'csv'
 require 'json'
 
 #
 module ExarepoTasks
+
   Derivative = Struct.new(:path, :label, :img)
   FileDerivative = Struct.new(:path, :label, :preview_data, :size)
   #
-  class Asset
+  class Asset < WaxTasks::Asset
     attr_reader :id, :path
 
     def initialize(path, pid, variants, type)

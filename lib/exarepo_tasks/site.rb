@@ -1,16 +1,25 @@
 # frozen_string_literal: true
-
+require 'wax_tasks'
 #
 module ExarepoTasks
   #
-  class Site
+  class Site < WaxTasks::Site
     attr_reader :config
+
+    def initialize(config = nil)
+     @config = ExarepoTasks::Config.new(config || WaxTasks.config_from_file)
+    end
+
+
+    def self.return_something
+      "something"
+    end
 
     # TODO: using the "simple" keyword now; change to datatype, like "csv"?
     def generate_file_derivatives(name, type)
       collection = @config.find_collection name
-      raise WaxTasks::Error::InvalidCollection if collection.nil?
-      raise WaxTasks::Error::InvalidConfig unless %w[simple].include? type
+      raise ExarepoTasks::Error::InvalidCollection if collection.nil?
+      raise ExarepoTasks::Error::InvalidConfig unless %w[simple].include? type
 
       records = case type
                 when 'simple'

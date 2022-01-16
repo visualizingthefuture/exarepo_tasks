@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'wax_tasks'
 #require 'mini_magick'
 require 'progress_bar'
 #require 'wax_iiif'
@@ -7,7 +8,7 @@ require 'csv'
 #
 module ExarepoTasks
   #
-  class Collection
+  class Collection < WaxTasks::Collection
     #
     module Files
       #
@@ -17,8 +18,8 @@ module ExarepoTasks
 
         #pre_process_pdfs
         records = records_from_metadata
-        Dir.glob(Utils.safe_join(@filedata_source, '*')).map do |path|
-          item = WaxTasks::Item.new(path, @file_variants)
+        Dir.glob(WaxTasks::Utils.safe_join(@filedata_source, '*')).map do |path|
+          item = ExarepoTasks::Item.new(path, @file_variants)
           #next if item.type == '.pdf'
           next puts Rainbow("Skipping #{path} because type #{item.type} is not an accepted format").yellow unless item.valid?("data")
 
@@ -32,7 +33,7 @@ module ExarepoTasks
       #
       #
       def pre_process_pdfs # from images; could copy to process XLSX to CSV?
-        Dir.glob(Utils.safe_join(@imagedata_source, '*.pdf')).each do |path|
+        Dir.glob(WaxTasks::Utils.safe_join(@imagedata_source, '*.pdf')).each do |path|
           target_dir = path.gsub '.pdf', ''
           next unless Dir.glob("#{target_dir}/*").empty?
 

@@ -1,8 +1,9 @@
 # frozen_string_literal: true
+require 'wax_tasks'
 
 module ExarepoTasks
   #
-  class Item
+  class Item < WaxTasks::Item
     attr_accessor :record, :iiif_config
     attr_reader :pid
 
@@ -20,12 +21,12 @@ module ExarepoTasks
 
     def assets
       if accepted_formats["image"].include? @type
-        [Asset.new(@path, @pid, @variants, @type)]
+        [ExarepoTasks::Asset.new(@path, @pid, @variants, @type)]
       elsif  accepted_formats["data"].include? @type
-        [Asset.new(@path, @pid, @variants, @type)]
+        [ExarepoTasks::Asset.new(@path, @pid, @variants, @type)]
       elsif @type == 'dir'
         paths = Dir.glob("#{@path}/*{#{(accepted_formats["image"] + accepted_formats["data"]).join(',')}}").sort
-        paths.map { |p| Asset.new(p, @pid, @variants, @type) }
+        paths.map { |p| ExarepoTasks::Asset.new(p, @pid, @variants, @type) }
       else
         []
       end

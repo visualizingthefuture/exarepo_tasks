@@ -15,6 +15,10 @@ RSpec.describe ExarepoTasks do
     expect(Foodie::Food.portray("Not Broccoli")).to eql("Delicious!")
   end
 
+  it "can create site" do
+    expect(ExarepoTasks::Site.return_something).to eql("something")
+  end
+
   #it "test wax" do
   #  expect(WaxTasks::Site.new).not_to be nil
   #end
